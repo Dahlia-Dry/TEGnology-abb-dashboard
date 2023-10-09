@@ -38,7 +38,7 @@ def update_graph(value,buffer_length,sampling_frequency = 180):
         results = pd.DataFrame.from_records(abb_db.read(buffer_length))
         results['time'] = pd.to_datetime(results['time'])+datetime.timedelta(hours=2)
         results['current_scaled'] =4+(results['current1'].astype('float')/65535)*16
-        results['pressure'] = -100 + (results['current1'].astype('float')/65535)*1100
+        results['pressure'] = (results['current1'].astype('float')/65535)*1100
         if (datetime.datetime.now(results['time'].iloc[0].tzinfo)-results['time'].iloc[0]).total_seconds() > 500: #check if data is current 
             last_updated = f"*{pd.to_datetime(datetime.datetime.now()).round('1s')}: the system is in sleep mode and no recent readings are available.*"
         else:
@@ -51,8 +51,8 @@ def update_graph(value,buffer_length,sampling_frequency = 180):
                                  y=results['current_scaled'].astype('float'),
                                  mode='lines',
                                  name = 'pressure sensor',
-                                 customdata=np.dstack((results['current1'],results['current_scaled'])),
-                                 hovertemplate= '%{y:.1f} mA',
+                                 customdata=np.stack((results['pressure'],results['current_scaled']),axis=-1),
+                                 hovertemplate= '%{y:.2f} mA<br>Pressure [kPa]:%{customdata[0]:.2f}',
                                  ),secondary_y=True)
         fig.update_yaxes(title_text="Temperature [C]", secondary_y=False)
         fig.update_yaxes(title_text="Current [mA]", secondary_y=True)

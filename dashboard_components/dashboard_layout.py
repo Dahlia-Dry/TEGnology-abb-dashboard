@@ -34,6 +34,22 @@ message = dbc.Row([
             , width=10)
         ], className="mb-3")
 
+contact_form = html.Div([ dbc.Container([
+            html.H2("Want to learn more? We'd love to hear from you!"),
+            dbc.Card(
+                dbc.CardBody([
+                     dbc.Form([name_input,email_input,message])
+                ,html.Div(id = 'submit-div', children = [
+                    dbc.Button('Submit'
+                    , color = 'primary'
+                    , id='button-submit'
+                    , n_clicks=0)
+                ]) 
+                ])
+            )
+        ])
+        ])
+
 LAYOUT = html.Div([
     #hidden components
     dcc.Interval(id='update_interval',interval=30000),
@@ -55,5 +71,10 @@ LAYOUT = html.Div([
     dbc.Row([
         dcc.Markdown(id='last-updated',style={'padding':10,'font-size':'10px'}),
     ],style={'padding':10}),
+    dbc.Row([
+        dbc.Col([html.Img(src='assets/setup.png',style={'width':'100%'})],width=4),
+        dbc.Col([dcc.Markdown(children=open('assets/graph_description.md').read())],width=8)],
+        style={'padding':10}),
+    contact_form
 ])
 
